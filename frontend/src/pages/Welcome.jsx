@@ -1,31 +1,56 @@
-// src/pages/Welcome.jsx
 import { Link } from "react-router-dom";
+import logoImg from "../assets/logo.png";
+import arrowIcon from "../assets/arrow.png";
+import personIcon from "../assets/person_icon.png";
+import cakeIcon from "../assets/cake_icon.png";
 
 export default function Welcome() {
   return (
     <div className="gradient-bg full-center">
-      <div className="welcome-card">
-        <div className="welcome-logo-circle">🎂</div>
+      <div className="welcome-content-wrapper">
+        
+        <div className="welcome-logo-circle">
+          <img src={logoImg} alt="logo" className="logo-img-main" />
+        </div>
+
         <h1 className="welcome-heading">
-          #1 platform connecting home bakers with people who crave something
-          special.
+          #1 platform connecting home bakers <br />
+          with people who crave something special.
         </h1>
+
         <p className="welcome-subheading">
-          Discover custom and ready-made cakes crafted by talented home bakers —
-          all in one place.
+          Discover custom and ready-made cakes crafted by talented <br />
+          home bakers — all in one place.
         </p>
 
-        <div className="welcome-actions">
-          <button className="welcome-btn secondary">
-            Continue as Customer
-          </button>
-          <Link to="/baker/sign-in" className="welcome-btn primary">
-            Continue as Baker
+        <div className="welcome-cards-row">
+          {/* customer card */}
+          <div className="welcome-card-item">
+            <div className="icon-container pink-bg">
+              <img src={personIcon} alt="" className="inner-icon" />
+            </div>
+            <div className="card-info">
+              <h3>Continue as Customer</h3>
+              <p>Browse home bakers, order custom or ready-made cakes.</p>
+            </div>
+            <img src={arrowIcon} alt="" className="arrow-small" />
+          </div>
+
+          {/* baker card */}
+          <Link to="/baker/sign-in" className="welcome-card-item no-underline">
+            <div className="icon-container blue-bg">
+              <img src={cakeIcon} alt="" className="inner-icon" />
+            </div>
+            <div className="card-info">
+              <h3>Continue as Baker</h3>
+              <p>Showcase your creations and build your brand.</p>
+            </div>
+            <img src={arrowIcon} alt="" className="arrow-small" />
           </Link>
         </div>
 
         <p className="welcome-caption">
-          Join thousands of happy customers and talented bakers.
+          Join thousands of happy customers and talented bakers
         </p>
       </div>
     </div>
