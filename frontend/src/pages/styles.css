@@ -975,6 +975,12 @@ button {
   margin: 6px 0 14px;
 }
 
+.auth-error-text {
+  margin: 0 0 12px;
+  color: #dc2626;
+  font-size: 13px;
+}
+
 .auth-footer {
   text-align: center;
   font-size: 13px;
