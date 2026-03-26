@@ -72,6 +72,7 @@ export default function BakerSignUp() {
         throw new Error("This account is not a baker account.");
       }
 
+      localStorage.setItem("id", loginData.id);            // MongoDB _id
       localStorage.setItem("bakerToken", loginData.token);
       localStorage.setItem("bakerUser", JSON.stringify(loginData));
       navigate("/dashboard");

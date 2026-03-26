@@ -112,3 +112,47 @@ app.get("/api/orders/:userId", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+
+// server.js
+
+// Add new cake
+app.post("/api/cakes", async (req, res) => {
+  const { userId, name, description, price, size, shape, flavor, filling, tiers, frosting } = req.body;
+  if (!userId || !name || !price) {
+    return res.status(400).json({ error: "userId, name and price are required" });
+  }
+
+  try {
+    const cake = new Cake({
+      userId,
+      name,
+      description,
+      price,
+      size,
+      shape,
+      flavor,
+      filling,
+      tiers,
+      frosting,
+      orders: 0,
+      rating: 5.0,
+    });
+    await cake.save();
+    res.status(201).json(cake);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.get("/api/cakes", async (req, res) => {
+  try {
+    const { userId } = req.query;
+    const filter = userId ? { userId } : {};
+    const cakes = await Cake.find(filter);
+    res.json(cakes); // 一定要 res.json，不要 res.sendFile()
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});

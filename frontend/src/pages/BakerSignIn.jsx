@@ -34,6 +34,7 @@ export default function BakerSignIn() {
         throw new Error("This account is not registered as a baker.");
       }
 
+      localStorage.setItem("id", data.id);
       localStorage.setItem("bakerToken", data.token);
       localStorage.setItem("bakerUser", JSON.stringify(data));
       navigate("/dashboard");
