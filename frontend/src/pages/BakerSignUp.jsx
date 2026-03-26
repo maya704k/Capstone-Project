@@ -25,6 +25,7 @@ export default function BakerSignUp() {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
