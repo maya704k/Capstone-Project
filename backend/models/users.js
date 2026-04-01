@@ -24,7 +24,7 @@ const userSchema = new Schema({
     deliveryRadius: Number,
     offerPickup: Boolean,
 
-    minOrderValue: Number,
+    minOrderValue: Number,             
     consultationFee: Number,
 
     customization: {

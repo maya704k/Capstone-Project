@@ -13,7 +13,7 @@ export default function BakerSignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setIsSubmitting(true);
+    setIsSubmitting(true);  
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/login`, {
