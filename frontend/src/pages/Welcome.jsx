@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import "./styles.css";
 import logoImg from "../assets/logo.png";
 import arrowIcon from "../assets/arrow.png";
 import personIcon from "../assets/person_icon.png";
@@ -25,16 +26,16 @@ export default function Welcome() {
 
         <div className="welcome-cards-row">
           {/* customer card */}
-          <div className="welcome-card-item">
+          <Link to="/customer/sign-up" className="welcome-card-item no-underline">
             <div className="icon-container pink-bg">
-              <img src={personIcon} alt="" className="inner-icon" />
+              <img src={personIcon} alt="Customer" className="inner-icon" />
             </div>
             <div className="card-info">
               <h3>Continue as Customer</h3>
               <p>Browse home bakers, order custom or ready-made cakes.</p>
             </div>
-            <img src={arrowIcon} alt="" className="arrow-small" />
-          </div>
+            <img src={arrowIcon} alt="Arrow" className="arrow-small" />
+          </Link>
 
           {/* baker card */}
           <Link to="/baker/sign-in" className="welcome-card-item no-underline">

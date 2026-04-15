@@ -1,21 +1,20 @@
-// src/pages/BakerSignUp.jsx
+// src/pages/CustomerSignUp.jsx
 import { Link, useNavigate } from "react-router-dom";
 import "./styles.css";
 import { useState } from "react";
 
-export default function BakerSignUp() {
+export default function CustomerSignUp() {
   const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   const [formData, setFormData] = useState({
-    businessName: "",
     name: "",
     email: "",
     phone: "",
-    location: "",
     password: "",
-    description: "",
     acceptedTerms: false,
   });
+
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,6 +40,7 @@ export default function BakerSignUp() {
     setIsSubmitting(true);
 
     try {
+      // 1. Register the Customer
       const response = await fetch(`${API_BASE_URL}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -48,11 +48,8 @@ export default function BakerSignUp() {
           name: formData.name.trim(),
           email: formData.email.trim(),
           password: formData.password,
-          role: "baker",
-          businessName: formData.businessName,
+          role: "customer",
           phone: formData.phone,
-          location: formData.location,
-          description: formData.description,
         }),
       });
 
@@ -62,10 +59,11 @@ export default function BakerSignUp() {
       }
       setNotice(
         data.welcomeEmailSent
-          ? "Welcome email sent. Please check your inbox for baker onboarding details."
+          ? "Welcome email sent. Please check your inbox to learn how CakeCraft works."
           : "Account created. Welcome email is not sending yet because email delivery is not configured."
       );
 
+      // 2. Automatically Log Them In
       const loginResponse = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -80,21 +78,16 @@ export default function BakerSignUp() {
         throw new Error(loginData.error || "Account created, but sign-in failed.");
       }
 
-      if (loginData.role !== "baker") {
-        throw new Error("This account is not a baker account.");
-      }
-
-      const enriched = {
+      // 3. Store Token and Redirect to Customer Home
+      const sessionUser = {
         ...loginData,
-        businessName: formData.businessName,
-        phone: formData.phone,
-        location: formData.location,
-        description: formData.description,
+        email: loginData.email || formData.email.trim(),
       };
 
-      localStorage.setItem("bakerToken", loginData.token);
-      localStorage.setItem("bakerUser", JSON.stringify(enriched));
-      navigate("/dashboard");
+      localStorage.setItem("customerToken", loginData.token);
+      localStorage.setItem("customerUser", JSON.stringify(sessionUser));
+      navigate("/home");
+      
     } catch (err) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -105,36 +98,24 @@ export default function BakerSignUp() {
   return (
     <div className="gradient-bg full-center">
       <div className="signup-card">
-        <div className="auth-logo-circle">🎂</div>
-        <h2 className="auth-title">Start Your Baker Journey</h2>
+        <div className="auth-logo-circle">🍰</div>
+        <h2 className="auth-title">Create Your Account</h2>
         <p className="auth-subtitle">
-          Join CakeCraft and grow your baking business
+          Join CakeCraft to find and order custom cakes
         </p>
 
         <form onSubmit={handleSubmit} className="signup-form">
-          <div className="grid-2">
-            <label className="field">
-              <span className="field-label">Business Name</span>
-              <input
-                name="businessName"
-                className="input"
-                placeholder="Cakes By Nelia"
-                value={formData.businessName}
-                onChange={handleChange}
-              />
-            </label>
-            <label className="field">
-              <span className="field-label">Your Name</span>
-              <input
-                name="name"
-                className="input"
-                placeholder="Nelia Kanafani"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </label>
-          </div>
+          <label className="field">
+            <span className="field-label">Full Name</span>
+            <input
+              name="name"
+              className="input"
+              placeholder="Your Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </label>
 
           <div className="grid-2">
             <label className="field">
@@ -154,51 +135,28 @@ export default function BakerSignUp() {
               <input
                 name="phone"
                 className="input"
-                placeholder="+1 (613) 123-4567"
+                placeholder="+1 (xxx) xxx-xxxx"
                 value={formData.phone}
                 onChange={handleChange}
               />
             </label>
           </div>
 
-          <div className="grid-2">
-            <label className="field">
-              <span className="field-label">Location</span>
-              <input
-                name="location"
-                className="input"
-                placeholder="City, Country"
-                value={formData.location}
-                onChange={handleChange}
-              />
-            </label>
-            <label className="field">
-              <span className="field-label">Password</span>
-              <input
-                name="password"
-                type="password"
-                className="input"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-            </label>
-          </div>
-
           <label className="field">
-            <span className="field-label">Business Description</span>
-            <textarea
-              name="description"
-              className="textarea"
-              placeholder="Tell us about your baking experience and specialties..."
-              value={formData.description}
+            <span className="field-label">Password</span>
+            <input
+              name="password"
+              type="password"
+              className="input"
+              placeholder="••••••••"
+              value={formData.password}
               onChange={handleChange}
+              required
             />
           </label>
 
           <div className="info-banner">
-            🎉 Special Launch Offer — join now and get 1 week of free premium
-            membership!
+            ✨ Welcome! Browse local bakers and track your orders in one place.
           </div>
 
           <label className="checkbox">
@@ -209,22 +167,21 @@ export default function BakerSignUp() {
               onChange={handleChange}
             />{" "}
             <span>
-              I agree to the Terms of Service, Privacy Policy, and Baker
-              Guidelines
+              I agree to the Terms of Service and Privacy Policy
             </span>
           </label>
 
           {error && <p className="auth-error-text">{error}</p>}
           {notice && <div className="info-box-blue">{notice}</div>}
 
-          <button type="submit" className="primary-btn wide">
-            {isSubmitting ? "Creating Account..." : "Create Baker Account"}
+          <button type="submit" className="primary-btn wide" disabled={isSubmitting}>
+            {isSubmitting ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 
         <p className="auth-footer">
           Already have an account?{" "}
-          <Link to="/baker/sign-in" className="link-accent">
+          <Link to="/customer/sign-in" className="link-accent">
             Sign in
           </Link>
         </p>
