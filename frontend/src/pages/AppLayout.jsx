@@ -1,12 +1,19 @@
+// src/pages/AppLayout.jsx
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import "./styles.css";
 import logoHorizontal from "../assets/logo_horizontal.png"; 
+import { useState } from "react";
 
 export default function AppLayout() {
   const navigate = useNavigate();
 
+  // initialize fromlocalStorage
+  const baker = JSON.parse(localStorage.getItem("bakerUser"));
+  const [bakerName] = useState(baker?.name || "Baker"); 
+
   const handleSignOut = () => {
     localStorage.removeItem("bakerToken");
+    localStorage.removeItem("bakerUser"); 
     navigate("/baker/sign-in", { replace: true });
   };
 
@@ -14,7 +21,6 @@ export default function AppLayout() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="sidebar-logo">
-          {/* using the horizontal logo here */}
           <img 
             src={logoHorizontal} 
             alt="CakeCraft Logo" 
@@ -41,7 +47,7 @@ export default function AppLayout() {
           <div className="user-card">
             <div className="avatar-circle" />
             <div className="user-info">
-              <div className="user-name">Nelia Baker</div>
+              <div className="user-name">{bakerName}</div>
               <div className="user-role">Baker</div>
             </div>
           </div>
