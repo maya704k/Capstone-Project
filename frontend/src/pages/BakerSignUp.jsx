@@ -1,5 +1,6 @@
 // src/pages/BakerSignUp.jsx
 import { Link, useNavigate } from "react-router-dom";
+import "./styles.css";
 import { useState } from "react";
 
 export default function BakerSignUp() {
@@ -16,6 +17,7 @@ export default function BakerSignUp() {
     acceptedTerms: false,
   });
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
@@ -29,6 +31,7 @@ export default function BakerSignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setNotice("");
 
     if (!formData.acceptedTerms) {
       setError("You must accept the terms to create an account.");
@@ -46,6 +49,10 @@ export default function BakerSignUp() {
           email: formData.email.trim(),
           password: formData.password,
           role: "baker",
+          businessName: formData.businessName,
+          phone: formData.phone,
+          location: formData.location,
+          description: formData.description,
         }),
       });
 
@@ -53,6 +60,11 @@ export default function BakerSignUp() {
       if (!response.ok) {
         throw new Error(data.error || "Failed to create account.");
       }
+      setNotice(
+        data.welcomeEmailSent
+          ? "Welcome email sent. Please check your inbox for baker onboarding details."
+          : "Account created. Welcome email is not sending yet because email delivery is not configured."
+      );
 
       const loginResponse = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
@@ -72,8 +84,16 @@ export default function BakerSignUp() {
         throw new Error("This account is not a baker account.");
       }
 
+      const enriched = {
+        ...loginData,
+        businessName: formData.businessName,
+        phone: formData.phone,
+        location: formData.location,
+        description: formData.description,
+      };
+
       localStorage.setItem("bakerToken", loginData.token);
-      localStorage.setItem("bakerUser", JSON.stringify(loginData));
+      localStorage.setItem("bakerUser", JSON.stringify(enriched));
       navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Something went wrong.");
@@ -195,6 +215,7 @@ export default function BakerSignUp() {
           </label>
 
           {error && <p className="auth-error-text">{error}</p>}
+          {notice && <div className="info-box-blue">{notice}</div>}
 
           <button type="submit" className="primary-btn wide">
             {isSubmitting ? "Creating Account..." : "Create Baker Account"}
