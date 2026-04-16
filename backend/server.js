@@ -729,7 +729,7 @@ app.post("/api/register", async (req, res) => {
     avatarPreset,
   } = req.body;
   if (!name || !email || !password || !role) {
-    return response.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ error: "All fields are required" });
   }
 
   try {
@@ -760,13 +760,13 @@ app.post("/api/register", async (req, res) => {
     } catch (mailError) {
       console.error("Failed to send welcome email", mailError);
     }
-    response.status(201).json({ message: "User registered successfully", welcomeEmailSent });
+    res.status(201).json({ message: "User registered successfully", welcomeEmailSent });
   } catch (err) {
     console.error(err);
     if (err.code === 11000) {
-      response.status(400).json({ error: "Email already exists" });
+      res.status(400).json({ error: "Email already exists" });
     } else {
-      response.status(500).json({ error: "Server error" });
+      res.status(500).json({ error: "Server error" });
     }
   }
 });
